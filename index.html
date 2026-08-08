@@ -1,0 +1,1533 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PlayMinecraftIN Progress Dashboard</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f6fa;
+      --surface: #ffffff;
+      --surface-2: #eef1f7;
+      --surface-3: #f7f9fc;
+      --text: #1c2430;
+      --muted: #5b6472;
+      --line: #e3e7ee;
+      --accent: #1f9d63;
+      --accent-ink: #ffffff;
+      --link: #2563eb;
+      --done: #157a4a;
+      --done-bg: #e9faf0;
+      --done-line: #a9e6c4;
+      --active: #1d4ed8;
+      --active-bg: #edf3ff;
+      --active-line: #bfd4fb;
+      --pending: #a9590a;
+      --pending-bg: #fff6e8;
+      --pending-line: #f6dba6;
+      --watch: #b5450f;
+      --watch-bg: #fff1e8;
+      --watch-line: #f6c9a6;
+      --blocked: #b91c1c;
+      --blocked-bg: #fdecec;
+      --blocked-line: #f5bcbc;
+      --shadow: 0 6px 18px rgba(28, 36, 48, 0.07);
+      --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.6;
+      font-family: var(--font-ui);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: var(--link);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .header-inner {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 20px 0 14px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 27px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    .subtitle {
+      margin: 5px 0 0;
+      color: var(--muted);
+      max-width: 640px;
+    }
+
+    .meta {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 12px;
+      background: var(--surface-3);
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .pill strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .tab-button {
+      appearance: none;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 9px 16px;
+      min-height: 40px;
+      font: inherit;
+      font-size: 14.5px;
+      font-weight: 650;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .tab-button:hover {
+      background: var(--surface-2);
+      color: var(--text);
+    }
+
+    .tab-button[aria-selected="true"] {
+      background: var(--accent);
+      color: var(--accent-ink);
+    }
+
+    main {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 22px 0 48px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .search {
+      width: 100%;
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0 14px;
+      font: inherit;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--surface);
+    }
+
+    .search::placeholder {
+      color: #8b93a1;
+    }
+
+    .filters {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .filter-button {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--muted);
+      min-height: 38px;
+      border-radius: 999px;
+      padding: 0 12px;
+      font: inherit;
+      font-size: 13.5px;
+      cursor: pointer;
+    }
+
+    .filter-button[data-active="true"] {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: var(--accent-ink);
+      font-weight: 700;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card,
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .card {
+      padding: 18px;
+    }
+
+    .card h2,
+    .section h2 {
+      margin: 0;
+      font-size: 16.5px;
+      font-weight: 750;
+      letter-spacing: 0;
+      line-height: 1.3;
+      color: var(--text);
+    }
+
+    .card p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 16px;
+      align-items: center;
+      padding: 22px;
+      margin-bottom: 16px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, var(--done-bg), var(--surface));
+      border: 1px solid var(--done-line);
+    }
+
+    .hero-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--done);
+      box-shadow: 0 0 0 6px var(--done-bg);
+      flex: 0 0 auto;
+    }
+
+    .hero h2 {
+      margin: 0 0 4px;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px 18px;
+      margin: 4px 0 0;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex: 0 0 auto;
+    }
+
+    .legend-dot.done { background: var(--done); }
+    .legend-dot.active { background: var(--active); }
+    .legend-dot.pending { background: var(--pending); }
+    .legend-dot.watch { background: var(--watch); }
+    .legend-dot.blocked { background: var(--blocked); }
+
+    .section {
+      margin-top: 14px;
+      overflow: hidden;
+      scroll-margin-top: 84px;
+    }
+
+    .section-header {
+      padding: 16px 18px 13px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .section-body {
+      display: grid;
+      gap: 0;
+    }
+
+    .item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      padding: 15px 18px;
+      border-top: 1px solid var(--line);
+      border-left: 4px solid transparent;
+      align-items: start;
+    }
+
+    .item:first-child {
+      border-top: 0;
+    }
+
+    .item[data-hidden="true"] {
+      display: none;
+    }
+
+    .item.done { border-left-color: var(--done); }
+    .item.active { border-left-color: var(--active); }
+    .item.pending { border-left-color: var(--pending); }
+    .item.watch { border-left-color: var(--watch); }
+    .item.blocked { border-left-color: var(--blocked); }
+
+    .item-marker {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      border: 2px solid var(--line);
+      margin-top: 1px;
+      flex: 0 0 auto;
+      display: grid;
+      place-items: center;
+    }
+
+    .item.done .item-marker {
+      border-color: var(--done);
+      background: var(--done-bg);
+    }
+
+    .item.done .item-marker::before {
+      content: "";
+      width: 9px;
+      height: 5px;
+      border-left: 2px solid var(--done);
+      border-bottom: 2px solid var(--done);
+      transform: rotate(-45deg);
+      margin-top: -2px;
+    }
+
+    .item.active .item-marker { border-color: var(--active); background: var(--active-bg); }
+    .item.pending .item-marker { border-color: var(--pending); background: var(--pending-bg); }
+    .item.watch .item-marker { border-color: var(--watch); background: var(--watch-bg); }
+    .item.blocked .item-marker { border-color: var(--blocked); background: var(--blocked-bg); }
+
+    .item-title {
+      margin: 0;
+      font-weight: 680;
+      font-size: 15.5px;
+    }
+
+    .item-note {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 14.5px;
+    }
+
+    .step-list {
+      margin: 8px 0 0;
+      padding-left: 20px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .step-list li {
+      margin-top: 5px;
+    }
+
+    .step-groups {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .step-group {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface-3);
+      overflow: hidden;
+    }
+
+    .step-group h3 {
+      margin: 0;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface-2);
+      color: var(--text);
+      font-size: 13.5px;
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: 0;
+    }
+
+    .step-group-list {
+      margin: 0;
+      padding: 9px 12px 11px;
+      list-style: none;
+      color: var(--muted);
+      font-size: 13.5px;
+    }
+
+    .step-group-list li {
+      display: grid;
+      grid-template-columns: 17px 1fr;
+      gap: 8px;
+      align-items: start;
+      padding-top: 7px;
+    }
+
+    .step-group-list li:first-child {
+      padding-top: 0;
+    }
+
+    .mini-check {
+      width: 15px;
+      height: 15px;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      margin-top: 2px;
+      background: var(--surface);
+    }
+
+    .step-group-list li.complete .mini-check {
+      border-color: var(--done);
+      background: var(--done-bg);
+      position: relative;
+    }
+
+    .step-group-list li.complete .mini-check::after {
+      content: "";
+      position: absolute;
+      left: 3px;
+      top: 4px;
+      width: 7px;
+      height: 3px;
+      border-left: 2px solid var(--done);
+      border-bottom: 2px solid var(--done);
+      transform: rotate(-45deg);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 5px 11px;
+      min-height: 28px;
+      font-size: 12.5px;
+      font-weight: 720;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+
+    .status::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .status.done { color: var(--done); background: var(--done-bg); border-color: var(--done-line); }
+    .status.done::before { background: var(--done); }
+    .status.active { color: var(--active); background: var(--active-bg); border-color: var(--active-line); }
+    .status.active::before { background: var(--active); }
+    .status.pending { color: var(--pending); background: var(--pending-bg); border-color: var(--pending-line); }
+    .status.pending::before { background: var(--pending); }
+    .status.watch { color: var(--watch); background: var(--watch-bg); border-color: var(--watch-line); }
+    .status.watch::before { background: var(--watch); }
+    .status.blocked { color: var(--blocked); background: var(--blocked-bg); border-color: var(--blocked-line); }
+    .status.blocked::before { background: var(--blocked); }
+
+    .empty {
+      display: none;
+      padding: 22px 16px;
+      color: var(--muted);
+      text-align: center;
+      border-top: 1px solid var(--line);
+    }
+
+    .empty.visible {
+      display: block;
+    }
+
+    .callout {
+      background: var(--active-bg);
+      border: 1px solid var(--active-line);
+      border-radius: 12px;
+      padding: 15px 18px;
+      color: #17356b;
+      margin-bottom: 14px;
+    }
+
+    .callout strong {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .index-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 16px;
+    }
+
+    .index-chip {
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 13px;
+    }
+
+    .index-chip:hover {
+      color: var(--accent-ink);
+      background: var(--accent);
+      border-color: var(--accent);
+      text-decoration: none;
+    }
+
+    .key-list {
+      display: grid;
+      gap: 11px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .key-list li {
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      gap: 12px;
+      border-top: 1px solid var(--line);
+      padding-top: 11px;
+    }
+
+    .key-list li:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .key-list span {
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    .path {
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+      word-break: break-word;
+    }
+
+    @media (max-width: 860px) {
+      .title-row,
+      .toolbar,
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .title-row {
+        display: grid;
+      }
+
+      .meta,
+      .filters {
+        justify-content: flex-start;
+      }
+
+      .grid,
+      .grid.two {
+        grid-template-columns: 1fr;
+      }
+
+      .item {
+        grid-template-columns: auto 1fr;
+      }
+
+      .item .status {
+        grid-column: 2;
+        width: max-content;
+      }
+
+      .key-list li {
+        grid-template-columns: 1fr;
+        gap: 3px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header>
+      <div class="header-inner">
+        <div class="title-row">
+          <div>
+            <h1>PlayMinecraftIN Dashboard</h1>
+            <p class="subtitle">A plain-language look at how the server is doing, what's finished, and what's next. No technical background needed.</p>
+          </div>
+          <div class="meta" aria-label="Dashboard metadata">
+            <span class="pill"><strong>Updated</strong> Aug 8, 2026</span>
+            <span class="pill"><strong>Server Version</strong> 1.22.0 (live)</span>
+            <span class="pill"><strong>Coming Next</strong> 1.24.0 (ready, not installed yet)</span>
+          </div>
+        </div>
+        <nav class="tabs" aria-label="Dashboard tabs">
+          <button class="tab-button" type="button" data-tab="overview" aria-selected="true">Overview</button>
+          <button class="tab-button" type="button" data-tab="progress" aria-selected="false">What's Done</button>
+          <button class="tab-button" type="button" data-tab="testing" aria-selected="false">Testing</button>
+          <button class="tab-button" type="button" data-tab="bugs" aria-selected="false">Known Issues</button>
+          <button class="tab-button" type="button" data-tab="backlog" aria-selected="false">Future Ideas</button>
+          <button class="tab-button" type="button" data-tab="maintain" aria-selected="false">About</button>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="toolbar">
+        <input id="search" class="search" type="search" placeholder="Search this dashboard..." aria-label="Search dashboard">
+        <div class="filters" aria-label="Status filters">
+          <button class="filter-button" type="button" data-filter="all" data-active="true">Show All</button>
+          <button class="filter-button" type="button" data-filter="active">Live</button>
+          <button class="filter-button" type="button" data-filter="pending">Not Started</button>
+          <button class="filter-button" type="button" data-filter="watch">Needs A Decision</button>
+          <button class="filter-button" type="button" data-filter="blocked">Stuck</button>
+          <button class="filter-button" type="button" data-filter="done">Finished</button>
+        </div>
+      </div>
+
+      <section id="overview" class="tab-panel active" aria-labelledby="Overview">
+        <div class="hero">
+          <span class="hero-dot" aria-hidden="true"></span>
+          <div>
+            <h2>Your server is up and running smoothly</h2>
+            <p>The last health check (Jul 8, 2026) came back clean: no crashes, no plugin errors. Players can build, earn in-game currency, complete daily tasks, mine for skill levels, travel around the map, trade with each other, and more. A small update is ready to install when you give the go-ahead (see "Coming Next" above).</p>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <h2>What the colors mean</h2>
+          </div>
+          <div class="section-body">
+            <div class="card">
+              <p style="margin-top:0">Every item on this dashboard is tagged with one of five labels, shown as a colored dot and pill:</p>
+              <div class="legend">
+                <span class="legend-item"><span class="legend-dot done"></span><strong>Finished</strong> &mdash; done and confirmed working</span>
+                <span class="legend-item"><span class="legend-dot active"></span><strong>Live</strong> &mdash; running on the real server, but still being double-checked</span>
+                <span class="legend-item"><span class="legend-dot pending"></span><strong>Not Started</strong> &mdash; on the list, work hasn't begun</span>
+                <span class="legend-item"><span class="legend-dot watch"></span><strong>Needs A Decision</strong> &mdash; waiting on you to choose or approve something</span>
+                <span class="legend-item"><span class="legend-dot blocked"></span><strong>Stuck</strong> &mdash; can't move forward until something else is fixed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <h2>Right now</h2>
+          </div>
+          <div class="section-body">
+            <div class="card" style="border:0;box-shadow:none;padding:16px 18px 4px">
+              <div class="grid">
+                <article class="card searchable" data-status="active">
+                  <h2>What we're working on</h2>
+                  <p>Getting the next update (version 1.24.0) installed and tested. It adds an easier point-and-click menu for the Mining skill and a full set of mining-themed daily tasks.</p>
+                </article>
+                <article class="card searchable" data-status="active">
+                  <h2>What players can already do</h2>
+                  <p>Accept the server rules and get a short welcome tour; earn Coins and Renown; claim and protect land; complete daily tasks; level up a Mining skill; travel around the map and visit friends; trade, buy from the shop, and check leaderboards; use crafting stations; and step into the risk/reward "Danger Zone."</p>
+                </article>
+                <article class="card searchable" data-status="active">
+                  <h2>Land &amp; building (Claims)</h2>
+                  <p>Players can protect their builds. The system now clearly shows which protected blocks came from playtime, which were bought with Coins, and how many extra "plots" (claim slots) a player has unlocked.</p>
+                </article>
+                <article class="card searchable" data-status="active">
+                  <h2>Custom icons &amp; look</h2>
+                  <p>A custom icon pack is live so Coins, Renown, and task menus show proper icons instead of plain text. Confirmed working from real screenshots.</p>
+                </article>
+                <article class="card searchable" data-status="done">
+                  <h2>Long-term world plan</h2>
+                  <p>We're building one big shared world split into a protected "Sanctum" (safe building, no player-vs-player fighting) and an outer "Badlands" (riskier area with fighting allowed and tougher monsters).</p>
+                </article>
+                <article class="card searchable" data-status="pending">
+                  <h2>Getting ready to open to the public</h2>
+                  <p>Still open: a welcome message (MOTD), confirming the join address works, deciding on a waiting list, confirming backups are running, and one full test of the new-player experience.</p>
+                </article>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-header">
+            <h2>Quick facts</h2>
+          </div>
+          <div class="section-body">
+            <div class="card">
+              <ul class="key-list">
+                <li><span>Main focus</span><div>Install and test the 1.24.0 update when you're ready. No world resets or risky changes are needed for this update.</div></li>
+                <li><span>Launch plan</span><div>Open to everyone from day one, once the remaining launch basics below are done.</div></li>
+                <li><span>World plan</span><div>Safe building zone in the middle, riskier PvP zone around the outside.</div></li>
+                <li><span>Custom icon pack</span><div><a href="../minecraft-server/lordcloud/resource-packs/playminecraft-ui/README.md">PlayMinecraftIN UI 0.1.0</a> is live. Still deciding whether to require it or make it optional.</div></li>
+                <li><span>Full design notes</span><div><a href="../minecraft-server/lordcloud/docs/server-design.md">server-design.md</a> has the complete plan, for anyone who wants the details.</div></li>
+                <li><span>Where testing lives</span><div>The Testing tab has one checklist per game feature &mdash; see it for what's been checked and what still needs a real player to try it.</div></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="progress" class="tab-panel" aria-labelledby="Progress">
+        <div class="callout">
+          <strong>What this tab shows</strong>
+          Everything that's been built for the server, grouped by topic. "Finished" items are done; "Not Started" items are still on the to-do list.
+        </div>
+        <div id="progressIndex" class="index-row"></div>
+        <div id="progressSections"></div>
+      </section>
+
+      <section id="testing" class="tab-panel" aria-labelledby="Testing">
+        <div class="callout">
+          <strong>What this tab shows</strong>
+          One checklist per game feature (not one per update), so testing reads as a full pass through that feature instead of a changelog. A feature only gets marked "Finished" once someone has actually confirmed it works in-game.
+        </div>
+        <div id="testingIndex" class="index-row"></div>
+        <div id="testingSections"></div>
+      </section>
+
+      <section id="bugs" class="tab-panel" aria-labelledby="Bugs">
+        <div class="callout">
+          <strong>What this tab shows</strong>
+          Anything currently wrong, worth watching, or already fixed. Nothing here is urgent unless it's marked "Stuck." The full technical history lives in a separate notes file, not shown here.
+        </div>
+        <div id="bugSections"></div>
+      </section>
+
+      <section id="backlog" class="tab-panel" aria-labelledby="Backlog">
+        <div class="callout">
+          <strong>What this tab shows</strong>
+          Ideas for later &mdash; nothing here has been started. Nothing on this list is required before launch.
+        </div>
+        <div id="backlogSections"></div>
+      </section>
+
+      <section id="maintain" class="tab-panel" aria-labelledby="Maintain">
+        <div class="hero" style="background:var(--surface-3);border-color:var(--line)">
+          <span class="hero-dot" style="background:var(--muted);box-shadow:0 0 0 6px var(--surface-2)" aria-hidden="true"></span>
+          <div>
+            <h2>About this dashboard</h2>
+            <p>This page is a friendly, always-up-to-date summary of the server project. It's generated and kept current by whichever AI assistant is helping with the server at the time &mdash; you shouldn't need to edit it by hand.</p>
+          </div>
+        </div>
+        <div class="grid two">
+          <article class="card searchable" data-status="active">
+            <h2>Where the real detail lives</h2>
+            <p>This page is the easy-to-read summary. A more detailed technical version, plus a running notes file, lives alongside it in the same project folder for whichever assistant is helping next.</p>
+          </article>
+          <article class="card searchable" data-status="pending">
+            <h2>How it stays accurate</h2>
+            <p>After any real change to the server, the assistant updates the detailed notes first, then refreshes this page to match. If something here looks out of date, just ask for a refresh.</p>
+          </article>
+        </div>
+        <div class="section">
+          <div class="section-header">
+            <h2>Useful links</h2>
+          </div>
+          <div class="section-body">
+            <div class="card">
+              <ul class="key-list">
+                <li><span>Detailed project notes</span><div class="path"><a href="./progress-dashboard.md">docs/progress-dashboard.md</a></div></li>
+                <li><span>Running work log</span><div class="path"><a href="./chat-handoff.md">docs/chat-handoff.md</a></div></li>
+                <li><span>Past decisions</span><div class="path"><a href="./decision-log.md">docs/decision-log.md</a></div></li>
+                <li><span>Server folder guide</span><div class="path"><a href="../minecraft-server/lordcloud/README.md">minecraft-server/lordcloud/README.md</a></div></li>
+                <li><span>Step-by-step test guides</span><div class="path">Longer guides for specific features live in <a href="../minecraft-server/lordcloud/docs/">minecraft-server/lordcloud/docs/</a>; each Testing tab card links its own most relevant guide.</div></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const data = {
+      progress: [
+        {
+          title: "Behind-The-Scenes Setup",
+          items: [
+            done("A dedicated project folder holds everything related to the server."),
+            done("Every AI assistant that works on this project automatically reads the same background notes first, so nothing gets lost between sessions."),
+            done("Passwords and secret keys are stored in a locked, encrypted vault on this computer, never in plain text."),
+            done("Server logs and settings can be pulled automatically to check on health without logging in by hand."),
+            done("A one-command health check tells us right away if anything is wrong."),
+            done("An interactive console lets us watch server activity and send commands live."),
+            done("Diagnostics are set up to never expose private player information."),
+            done("This dashboard exists and is kept current after meaningful changes."),
+            pending("Keep this dashboard current going forward.")
+          ]
+        },
+        {
+          title: "Big-Picture Decisions",
+          items: [
+            done("Server identity chosen: a fair, India-first survival server focused on trust and community, not pay-to-win."),
+            done("The full plan is written down in one canonical design document."),
+            done("Money and rewards plan written down: Coins, Renown, no pay-to-win shortcuts."),
+            done("Death penalty plan decided: players keep their stuff, but pay a small, capped Coin fee."),
+            done("Land-protection plan decided: basic protection is free; Coins buy more space; Renown unlocks more plots."),
+            done("First version of the Daily Task board designed."),
+            done("Two-zone world plan recorded: safe zone in the middle, risk zone around the edge."),
+            pending("Fine-tune daily tasks once real players have tried them."),
+            pending("Fine-tune land prices, limits, and refund rules."),
+            pending("Decide exact danger-zone monster and PvP rules."),
+            pending("Decide whether death should cost anything beyond the Coin fee."),
+            pending("Decide on a home/teleport command policy."),
+            pending("Decide limits on farms and lag-causing builds.")
+          ]
+        },
+        {
+          title: "Safety And Staff Permissions",
+          items: [
+            done("Anti-grief, rollback, and anti-cheat protection are installed and running."),
+            done("Staff roles set up: Owner, Admin, Moderator, Helper, and regular Player, each with the right permissions."),
+            done("Checked and confirmed working for regular players, the owner, and one moderator; permissions still hold after a server restart."),
+            pending("Still need to check the Helper and Admin roles."),
+            pending("Still need to test what happens when someone's role changes while they're online."),
+            pending("Fine-tune the anti-grief and rollback tools."),
+            pending("Decide whether to update the anti-cheat plugin.")
+          ]
+        },
+        {
+          title: "Game Features",
+          items: [
+            done("Rules and welcome tour: new players see the rules first, then a short guided tour. Staff can edit both without touching code."),
+            done("Money system: players have a Coins balance, a Renown reputation score, a wallet menu, and a small Coin fee on death."),
+            done("Land protection: a full menu for claiming and protecting land, extra plots unlocked with Renown, and clear tracking of how each protected block was earned."),
+            done("Daily tasks: a rotating task board with real in-game goals (gathering, farming, crafting, trading, and more), pinning favorites, and clear status labels."),
+            active("Mining skill: fully working end-to-end (earning experience, leveling up, a small mining speed boost, and scaled daily tasks). An easier point-and-click menu and a full mining-only task set are built and tested, just not installed on the live server yet."),
+            done("Travel: get around the map easily, save favorite spots, visit other online players (with their permission), and a short safety timer after a fight."),
+            done("Trading: players can trade items and Coins directly with each other, safely."),
+            done("In-game shop: spend Coins on admin-approved items."),
+            done("Leaderboards: weekly, seasonal, and all-time rankings for contribution, tasks, Renown, and more."),
+            done("Interactive helpers: clickable signboards, in-game characters, and reward chests placed around the world."),
+            done("Crafting stations: quick commands to open a crafting table, ender chest, anvil, and similar tools from anywhere."),
+            done("AFK tracking: the server knows when a player has stepped away, and tracks real playtime separately."),
+            active("Safe Zone / Danger Zone: the boundary and rules are live. Turning on actual building in the Danger Zone still needs one more deliberate setting change that hasn't been made yet."),
+            done("Behind-the-scenes code cleanup: the plugin's code was reorganized for easier maintenance, with no change to how anything works for players."),
+            pending("A few smaller money-admin checks are still open."),
+            pending("Finish the remaining rules and welcome-tour checks with real players.")
+          ]
+        },
+        {
+          title: "Custom Icons And Visuals",
+          items: [
+            done("A custom icon pack was designed, built, and is now hosted live for players to download automatically."),
+            done("Icons for Coins, Renown, tasks, and more are wired into the in-game menus."),
+            done("A visual bug (icons breaking nearby text) was found and fixed."),
+            done("Confirmed working with real player screenshots."),
+            pending("Check how everything looks if a player declines the icon pack."),
+            pending("Decide whether the icon pack should be required or optional before launch."),
+            pending("Add one small missing technical label the game client expects.")
+          ]
+        },
+        {
+          title: "World And Building Tools",
+          items: [
+            done("The main spawn point is set and configured."),
+            done("World-management and land-generation tools are installed and working."),
+            done("The world size and safe-zone/danger-zone boundary shape are decided (a large shared world with a protected middle and a riskier outer ring)."),
+            done("Clickable signboards, helper characters, and reward chests can be placed anywhere by staff."),
+            pending("Build or finish the actual welcome area at spawn."),
+            pending("Add visible signs at spawn explaining rules, land claims, Discord, and how to report problems."),
+            pending("Decide where the first in-game shop area will be."),
+            pending("Set the actual world size boundary once ready."),
+            pending("Pre-generate the world map so players don't wait on new areas loading.")
+          ]
+        },
+        {
+          title: "Discord And Community",
+          items: [
+            done("Discord server plan written: roles, channels, rules, and welcome messages."),
+            done("A one-click setup tool can build the whole Discord server automatically."),
+            pending("Actually create the Discord server."),
+            pending("Invite and run the setup tool for real."),
+            pending("Turn on Discord's built-in rules-screening and community features."),
+            pending("Add the Discord invite link to the in-game welcome area."),
+            pending("Test the reporting/support process before telling people about it.")
+          ]
+        },
+        {
+          title: "Getting Ready To Launch",
+          items: [
+            done("Decided to launch publicly from day one, once ready, rather than a private beta."),
+            done("Core protection tools and the main spawn point are set up."),
+            pending("Write a short welcome message players see when connecting."),
+            pending("Confirm the easy-to-remember join address works properly."),
+            pending("Confirm whether new players need to be pre-approved before joining."),
+            pending("Confirm backups are actually running on a schedule."),
+            pending("Run one full test of a brand-new player joining for the first time."),
+            pending("Decide when to update the game server software and anti-cheat tool."),
+            pending("Write the public server listing and the first announcement."),
+            pending("Set up folders for finance and marketing once that work starts.")
+          ]
+        }
+      ],
+      testing: [
+        {
+          title: "Onboarding And Rules",
+          items: [
+            active("Onboarding and rules.", "Inventory-based rules acceptance (rules-version rules-inventory-v2) plus first-join /guide onboarding are live through PlayMinecraftCore 1.22.0. Admins edit rules via /admin rules (draft/publish) and onboarding via /admin onboarding. Guides: playminecraft-core-v0.9.9-rules-inventory-test-guide.md, playminecraft-core-v1.0.0-onboarding-guide-test-guide.md.", null, [
+              stepGroup("Fresh player flow", [
+                testStep("Join as a new/unaccepted account; confirm the required rules screen blocks normal play and Accept/Close/Reject buttons work."),
+                testStep("Accept and confirm the first-join guide opens with Start Guide items in sequence."),
+                testStep("Finish the guide and confirm later /guide visits hide Finish Guide.")
+              ]),
+              stepGroup("Admin editing", [
+                testStep("/admin rules: add or edit a draft category/subrule, publish, and confirm rules-version bumps and previously accepted players are re-prompted."),
+                testStep("/admin onboarding preview, reload, force-open, and reset.")
+              ]),
+              stepGroup("Edge cases", [
+                testStep("Die while the required dialog is open; confirm respawn re-opens it."),
+                testStep("Relog mid-guide and confirm progress resumes without loss."),
+                testStep("Try to bypass by disconnecting/reconnecting before accepting.")
+              ]),
+              stepGroup("Closeout", [
+                testStep("Run check-server after any rules/onboarding edit and confirm no plugin exceptions.")
+              ])
+            ])
+          ]
+        },
+        {
+          title: "Economy Core",
+          items: [
+            active("Coins, Renown, Wallet, HUD, and death fee.", "/wallet, /coins, /renown, and /hud are live, backed by the shared CoinEconomy service. Death applies a bounded Coin fee (5 percent, minimum 5, maximum 100, 60-minute new-player grace, 120-second repeat-death grace) unless PvP, admin-kill, unaccepted, or exempt. /admin economy handles confirmation-based Coins/Renown admin edits. Guide: playminecraft-core-v0.7.2-death-fee-test-guide.md.", null, [
+              stepGroup("Player flow", [
+                testStep("Open /wallet, /coins, /renown, and /hud on/off/toggle/refresh."),
+                testStep("Confirm HUD sidebar and action-bar balance updates fire on every Coin/Renown mutation.")
+              ]),
+              stepGroup("Death fee", [
+                testStep("Non-op accepted player outside grace dies to a normal cause; the bounded fee is charged and the message is readable.", true),
+                testStep("Die again inside repeat-death grace; confirm no second charge and the grace countdown appears if configured."),
+                testStep("Verify PvP death, admin/server /kill, unaccepted players, and playminecraft.deathfee.exempt all skip the fee.")
+              ]),
+              stepGroup("Admin controls", [
+                testStep("/admin economy coins|renown set|add|take <player> <amount> confirm succeeds for an admin."),
+                testStep("The same commands are denied clearly for a non-admin.")
+              ]),
+              stepGroup("Persistence and closeout", [
+                testStep("Relog and confirm balances and HUD state survive."),
+                testStep("Run check-server after any economy admin change.")
+              ])
+            ])
+          ]
+        },
+        {
+          title: "Claims And Claim-Block Growth",
+          items: [
+            active("Claims menu and PMCore claim accrual.", "/claims separates playtime-earned, PMCore-bought, and other-bonus GriefPrevention blocks; Renown unlocks extra claim slots via /claims unlock; PMCore grants roughly 100 claim blocks per active hour once GriefPrevention's native hourly accrual is set to 0. /admin claims covers bonus reduction, playtime reduction, and slot management. Guides: playminecraft-core-v0.8.6-claims-menu-test-guide.md, playminecraft-core-v1.0.2-claim-slots-test-guide.md, playminecraft-core-v1.17.0-pmcore-claim-accrual-test-guide.md.", null, [
+              stepGroup("Purchases and attribution", [
+                testStep("Buy blocks via a configured package and the Custom Amount selector.", true),
+                testStep("Confirm /claims shows the playtime/bought/other split correctly, not relabeling pre-existing bonus as bought.")
+              ]),
+              stepGroup("Slots and growth", [
+                testStep("/claims unlock spends Renown for a bonus slot; confirm the slot cap blocks /claim, /claimhere, and golden-shovel new claims at the limit."),
+                testStep("Stay active (not AFK) past one accrual interval and confirm a claim-block action-bar award plus a GriefPrevention accrued-block increase.")
+              ]),
+              stepGroup("Admin controls", [
+                testStep("/admin claims reduce and reduceplaytime with confirmation; /admin claims slots add/take/set."),
+                testStep("Confirm GriefPrevention native hourly accrual is 0 so PMCore growth is not paused.")
+              ]),
+              stepGroup("Edge cases and persistence", [
+                testStep("AFK time earns no growth; unaccepted players earn no growth until acceptance, with no retroactive backpay."),
+                testStep("Relog and restart; confirm blocks, slots, and the ledger split survive."),
+                testStep("Run check-server; confirm claim-playtime-accrual.yml and claim-block-ledger.yml exist without pasting contents.")
+              ])
+            ])
+          ]
+        },
+        {
+          title: "Daily Board And Tasks",
+          items: [
+            active("Daily Board, tasks, and the v1.24.0 Mining rebuild.", "/tasks (with /daily and /board aliases) rotates categories, tracks event-based tasks (breeding, harvest, brew, claim expansion, trades), shows Open/In Progress/Ready/Done status, and supports pinning. /admin tasks covers reload, status, and reset. The v1.24.0 Mining-only rebuild (18 tasks, skill-scaled) is built locally and not deployed yet. Guide: playminecraft-core-v1.24.0-mining-daily-tasks-test-guide.md.", null, [
+              stepGroup("Board and completion", [
+                testStep("/tasks shows rotated categories, the reset timer, filters, and the ready-to-claim count."),
+                testStep("Complete an item-delivery task and an event-tracked task (breeding, harvest, brew, or claim); confirm rewards land.")
+              ]),
+              stepGroup("Pinning and HUD", [
+                testStep("Pin up to the configured max; confirm HUD sidebar shows live progress for each pin."),
+                testStep("Confirm pins clear automatically when PMCore selects the next board date.")
+              ]),
+              stepGroup("Admin controls", [
+                testStep("/admin tasks status <player>, reload, and reset <player> confirm."),
+                testStep("A non-admin gets a clear denial on the same commands.")
+              ]),
+              stepGroup("v1.24.0 Mining rebuild (pending deploy)", [
+                testStep("After deploying, confirm only Mining tasks appear and mine_blocks progress advances correctly for Deep Delve, Ore Scout, The Stone Harvest, and Gold Rush."),
+                testStep("Confirm skill-scaled item quantities match the player's Mining level band.")
+              ]),
+              stepGroup("Closeout", [
+                testStep("Run check-server; confirm no stale task IDs from the retired catalog are referenced.")
+              ])
+            ])
+          ]
+        },
+        {
+          title: "Skills - Mining",
+          items: [
+            active("Mining skill: config, XP, perks, scaling, and GUI.", "One continuous system built in phases (config foundation, XP tracking, chat UI/admin, Daily scaling, underground Haste perk) and live through PlayMinecraftCore 1.22.0. The inventory GUI (/skills, /admin skills) and the 18-task Mining-only Daily rebuild are built locally at v1.24.0 and not deployed yet. Coin rewards from Mining and bonus drops remain intentionally deferred. Guides: playminecraft-core-v1.19.0-mining-xp-test-guide.md, playminecraft-core-v1.20.0-skills-ui-admin-test-guide.md, playminecraft-core-v1.21.0-daily-skill-scaling-test-guide.md, playminecraft-core-v1.22.0-mining-haste-perk-test-guide.md, playminecraft-core-v1.24.0-mining-daily-tasks-test-guide.md.", null, [
+              stepGroup("XP and levels", [
+                testStep("Break configured Mining blocks and confirm XP/level-up matches documented values (stone 0.2, soft earth 0.1, coal 1.0, iron/copper 2.0, gold/lapis/redstone 3.0, diamond/emerald 8.0, ancient debris 15.0)."),
+                testStep("Confirm creative, cancelled, unaccepted, and no-permission breaks award nothing."),
+                testStep("Confirm the player-placed-block marker blocks farmed XP from placed-then-broken blocks.")
+              ]),
+              stepGroup("Perks", [
+                testStep("At Mining level 15 below Y48 in Survival/Adventure, confirm Haste I applies and refreshes on the configured tick/duration."),
+                testStep("Confirm Haste expires above Y48, in Creative, or while flying, and that no bonus drops occur.")
+              ]),
+              stepGroup("Daily scaling", [
+                testStep("Confirm scaled tasks (smooth stone, clay, raw iron, sand, and the v1.24.0 Mining pool) show a player-specific requirement that grows with level while Coin/Renown rewards stay fixed.")
+              ]),
+              stepGroup("Admin controls", [
+                testStep("/admin skills setxp|addxp|setlevel <player> mining <amount>, reload, and player lookup for online/offline/unknown targets.")
+              ]),
+              stepGroup("v1.24.0 GUI and task pool (pending deploy)", [
+                testStep("Deploy, back up and merge live skills.yml and daily-tasks.yml, confirm /pmcore version reports 1.24.0."),
+                testStep("Verify the /skills hub, /skills mining detail screen, and the /admin skills inventory GUI.")
+              ]),
+              stepGroup("Closeout", [
+                testStep("Confirm skill-progress.yml is never pasted or mirrored; run check-server.")
+              ])
+            ])
+          ]
+        },
+        {
+          title: "Travel",
+          items: [
+            active("Travel destinations, waypoints, requests, and trust.", "/travel is a 54-slot hub covering configured destinations (/main, /resource), private/public waypoints, online-player travel requests, and receiver-owned trust. Combat tag blocks travel for 15 seconds, shown as a red PvP boss-bar countdown, and Badlands travel-out is blocked when zones are enabled. /admin travel manages public waypoints, player trust, and reload. Guide: playminecraft-core-v1.13.1-travel-waypoints-requests-test-guide.md.", null, [
+              stepGroup("Destinations and waypoints", [
+                testStep("/main and /resource return to the last PMCore-travel location with spawn fallback."),
+                testStep("Create, publish/hide, and delete a private and a public waypoint within configured limits.")
+              ]),
+              stepGroup("Requests and trust", [
+                testStep("Send a travel request to an online player; accept and deny via the clickable prompt before the 30-second expiry."),
+                testStep("Trust a player and confirm they can travel to you without asking; confirm trust is one-directional.")
+              ]),
+              stepGroup("PvP and zones", [
+                testStep("Get combat-tagged; confirm travel is denied and the boss-bar countdown survives a relog until it expires."),
+                testStep("If zones are enabled, confirm Badlands entry works but PMCore Travel cannot leave Badlands.")
+              ]),
+              stepGroup("Admin and closeout", [
+                testStep("/admin travel: list/delete public waypoints, inspect a player's travel counts, clear trust, reload travel.yml."),
+                testStep("Restart and confirm travel-waypoints.yml and travel-trust.yml persist; run check-server.")
+              ])
+            ])
+          ]
+        },
+        {
+          title: "Trade",
+          items: [
+            active("Player-to-player trade.", "/trade offers first-party player trading with item-stack and exact-Coin offers, two-sided lock-in, and a private trade-audit.yml summary. Completed trades count toward the Trades leaderboard and the trade_with_player Daily task. Guide: playminecraft-core-v1.4.0-player-trade-test-guide.md.", null, [
+              stepGroup("Trade flow", [
+                testStep("Open a trade, both sides add items/Coins, lock in, and confirm items/Coins swap only after both lock."),
+                testStep("Cancel mid-trade and confirm nothing moves.")
+              ]),
+              stepGroup("Admin and cross-system credit", [
+                testStep("/admin trade inspects recent trade summaries without exposing full player inventories."),
+                testStep("Confirm a completed trade advances trade_with_player Daily progress and the Trades leaderboard.")
+              ]),
+              stepGroup("Closeout", [
+                testStep("Run check-server; confirm trade-audit.yml stays private.")
+              ])
+            ])
+          ]
+        },
+        {
+          title: "Exchange",
+          items: [
+            active("Coin shop.", "/exchange (with /admin-exchange, /ae) sells admin-configured items/blocks for whole-Coin prices with item-count or full-stack amount selectors and optional per-player daily limits. /admin exchange manages listings; purchases intentionally do not earn leaderboard credit.", null, [
+              stepGroup("Purchases", [
+                testStep("Buy an item by count and by stack; confirm whole-Coin pricing and per-item daily limits, including unlimited, are enforced."),
+                testStep("Confirm insufficient Coins and a full inventory are denied cleanly.")
+              ]),
+              stepGroup("Admin controls", [
+                testStep("/admin exchange add/price/limit/enable/disable/remove with confirmation, reload, and player-view preview.")
+              ]),
+              stepGroup("Edge cases and closeout", [
+                testStep("Confirm Exchange purchases do not add to contribution leaderboards."),
+                testStep("Restart and confirm exchange-usage.yml persists; run check-server.")
+              ])
+            ])
+          ]
+        },
+        {
+          title: "Leaderboards",
+          items: [
+            active("Contribution leaderboards.", "/leaderboard and /top cover Weekly, Season, and All Time periods across Contribution, Tasks, Renown, Coins Earned, Claims, and Trades. Scoring credits Daily completions, earned Renown/Coins, PMCore trades, claim-slot unlocks, and claim-block purchases; admin balance edits and Exchange purchases do not count. Guide: playminecraft-core-v1.9.0-leaderboards-test-guide.md.", null, [
+              stepGroup("Scoring", [
+                testStep("Earn credit through a Daily completion, a trade, and a claim-block purchase; confirm each period and category updates correctly.")
+              ]),
+              stepGroup("Admin controls", [
+                testStep("/admin leaderboard preview, hide/unhide a player, reload, and a confirmed period reset.")
+              ]),
+              stepGroup("Interactables and closeout", [
+                testStep("Confirm a board or NPC leaderboard action opens the correct view."),
+                testStep("Run check-server after a reset.")
+              ])
+            ])
+          ]
+        },
+        {
+          title: "Interactables",
+          items: [
+            active("Boards, NPCs, menus, labels, and loot containers.", "All PMCore-managed under /admin interactables. Triggers support right_click, walk_in, and stand_near; actions cover tasks, deliveries, claims, wallet, rules, guide, travel, menu:<id>, leaderboard, and close. Guides: playminecraft-core-v1.5.0 through v1.11.0 interactable test guides.", null, [
+              stepGroup("Boards and NPCs", [
+                testStep("Use the tagged wand to save a board and create a villager NPC; confirm both open the configured action for a normal player.")
+              ]),
+              stepGroup("Menus, labels, and triggers", [
+                testStep("Open a menu:<id> dialogue; confirm a walk_in Travel Gate and a stand_near prompt fire correctly."),
+                testStep("Confirm a floating label displays and refreshes.")
+              ]),
+              stepGroup("Loot containers", [
+                testStep("Register a chest or barrel, add a chance-based item with an optional global limit, and confirm each player gets an independent virtual copy."),
+                testStep("Confirm deposits only work when allowed, and non-admin breaking, explosions, and hoppers are blocked.")
+              ]),
+              stepGroup("Admin and closeout", [
+                testStep("Confirm playminecraft.interactables.admin gates all creation and removal."),
+                testStep("Restart and confirm interactables.yml and loot-container-state.yml persist; run check-server.")
+              ])
+            ])
+          ]
+        },
+        {
+          title: "Stations",
+          items: [
+            active("Utility workstation commands.", "Command-based stations (/crafting, /enderchest, /anvil, /loom, /smithingtable, /stonecutter, /cartographytable, /grindstone, plus short aliases) are gated by current-rules acceptance and per-station permissions. /enchantingtable exists but is disabled by default. Guide: playminecraft-core-v1.14.0-stations-test-guide.md.", null, [
+              stepGroup("Player flow", [
+                testStep("Open each enabled station command and confirm the correct vanilla UI appears with no item duplication or loss on close.")
+              ]),
+              stepGroup("Permissions and config", [
+                testStep("Deny a player missing a per-station permission or unaccepted rules."),
+                testStep("Confirm the disabled /enchantingtable stays unavailable by default.")
+              ]),
+              stepGroup("Admin and closeout", [
+                testStep("/admin stations status/reload/preview."),
+                testStep("Test relog/death/world-change/disconnect mid-use; run check-server.")
+              ])
+            ])
+          ]
+        },
+        {
+          title: "AFK And Presence",
+          items: [
+            active("AFK detection and playtime stats.", "/afk and /away toggle manual AFK; automatic AFK triggers after 300 seconds of inactivity (10-second checks) and grays the tablist entry. /afk stats tracks cumulative online/active/AFK time, sessions, and first/last seen; /admin afk covers admin lookup and save. Guides: playminecraft-core-v1.15.0-afk-presence-test-guide.md, playminecraft-core-v1.16.0-presence-playtime-test-guide.md.", null, [
+              stepGroup("AFK detection", [
+                testStep("Confirm movement, camera, chat, commands, interaction, inventory, block break/place, item use, combat, and teleports all clear AFK."),
+                testStep("Confirm passive position drift alone does not clear AFK.")
+              ]),
+              stepGroup("Stats and exemptions", [
+                testStep("/afk stats shows Total online, Actual playtime, AFK time, AFK share, and Sessions correctly."),
+                testStep("playminecraft.afk.exempt staff skip automatic timeout but can still self-toggle.")
+              ]),
+              stepGroup("Admin and closeout", [
+                testStep("/admin afk, /admin afk player <player>, /admin afk save."),
+                testStep("Restart and confirm presence-stats.yml persists; run check-server.")
+              ])
+            ])
+          ]
+        },
+        {
+          title: "Zones - Sanctum And Badlands",
+          items: [
+            watch("Sanctum/Badlands boundary enforcement.", "Square zone detection on world (Sanctum +/-3000, world edge +/-6000) enforces Badlands-only PvP, Sanctum claim-required builds, Badlands claim/cross-boundary blocking, hostile-mob tuning, Badlands personal weather, and bold entry titles. Badlands building additionally needs a deliberate GriefPrevention world-mode switch from SurvivalRequiringClaims to Survival that has not been made yet. Guide: playminecraft-core-v1.1.1-zones-test-guide.md.", null, [
+              stepGroup("Boundary enforcement", [
+                testStep("Cross into Badlands; confirm the title, ambience, and action-bar warning fire."),
+                testStep("Confirm PvP only applies when both players are in Badlands; confirm Sanctum still requires a claim to build.")
+              ]),
+              stepGroup("GriefPrevention mode switch (deliberate, owner-approved)", [
+                testStep("Only after this is intentionally scheduled: switch world GriefPrevention mode to Survival, confirm Badlands building works, and confirm Sanctum protections are unaffected.")
+              ]),
+              stepGroup("Cross-feature checks", [
+                testStep("Confirm Badlands blocks Travel exit (v1.13.1+) and applies the Mining XP ore bonus (v1.19+) only inside Badlands.")
+              ]),
+              stepGroup("Closeout", [
+                testStep("Run /admin zones status and check-server after any zone or GriefPrevention mode change.")
+              ])
+            ])
+          ]
+        },
+        {
+          title: "UI Resource Pack",
+          items: [
+            active("PlayMinecraftIN UI pack.", "PlayMinecraftIN UI 0.1.0 is live-hosted via mc-packs (require-resource-pack=true) and confirmed by user screenshots to render /daily, /daily complete, and HUD correctly with hidden score numbers. Pack-disabled fallback and the forced-vs-optional launch decision are still open. Guide: playminecraft-ui-resource-pack-test-guide.md.", null, [
+              stepGroup("Pack-enabled pass", [
+                testStep("Icons render in /daily, HUD, action bars, death-fee text, and /pmcore icons without leaking the custom font onto normal text.", true)
+              ]),
+              stepGroup("Pack-disabled fallback", [
+                testStep("Join with the pack declined or failed to load; confirm all UI stays readable without glyphs.")
+              ]),
+              stepGroup("Launch decision and closeout", [
+                testStep("Decide forced-vs-optional delivery and add a stable resource-pack-id before public launch."),
+                testStep("Run check-server.")
+              ])
+            ])
+          ]
+        },
+        {
+          title: "Permissions And Protection Stack",
+          items: [
+            active("LuckPerms, CoreProtect, GriefPrevention, GrimAC.", "LuckPerms inheritance (owner -> admin -> moderator -> helper -> default) is applied alongside CoreProtect, GriefPrevention, and GrimAC. Default, owner, Lumenos_ moderator, and restart-persistence checks are confirmed; helper/admin role and online demotion/bypass checks remain. Guide: permissions-hardening-test-guide.md.", null, [
+              stepGroup("Confirmed baseline", [
+                testStep("Default player, owner, moderator, and restart-persistence checks passed with no issues reported.", true)
+              ]),
+              stepGroup("Remaining role checks", [
+                testStep("Verify helper-role permissions and admin-role permissions against the intended node list.")
+              ]),
+              stepGroup("Change and bypass checks", [
+                testStep("Demote/promote a test account online and confirm nodes update immediately."),
+                testStep("Run bypass checks against verified default/owner/moderator paths.")
+              ]),
+              stepGroup("Protection tuning and closeout", [
+                testStep("Tune GriefPrevention defaults and the CoreProtect rollback/investigation workflow once role checks close."),
+                testStep("Verify detailed LuckPerms output via panel console or in-game /lp when RCON does not echo it; run check-server after any permission change.")
+              ])
+            ])
+          ]
+        },
+        {
+          title: "Launch Readiness - Fresh Player Flow",
+          items: [
+            pending("End-to-end fresh player flow.", "End-to-end validation that a brand-new player can join, understand rules/onboarding, and use the core systems without confusion, plus the operational basics (MOTD, domain, whitelist, backups) needed before going public. No dedicated guide yet; run this as a full pass before any launch push.", null, [
+              stepGroup("First join", [
+                testStep("Fresh non-op account joins; rules block bypass until accepted; spawn onboarding explains claims, Discord, reporting, and the Daily Board.")
+              ]),
+              stepGroup("Core commands", [
+                testStep("/coins, /renown, /daily, /hud, /main, /resource, /claims, and /travel all work; admin-only commands deny clearly.")
+              ]),
+              stepGroup("Operational basics", [
+                testStep("Branded MOTD is set; joining through playminecraft.in works; whitelist setting matches the launch plan; the LordCloud backup routine is confirmed.")
+              ]),
+              stepGroup("Closeout", [
+                testStep("Relog and confirm accepted status, HUD preference, and player-facing state persist without inspecting private state files."),
+                testStep("Run check-server after the flow and log any blocker under Bugs.")
+              ])
+            ])
+          ]
+        }
+      ],
+      bugs: [
+        {
+          title: "Anything Urgent Right Now?",
+          items: [
+            watch("Nothing urgent right now.", "The last health check came back clean with no crash. One thing to know: sending commands remotely (RCON) isn't working since the server moved hosts, so admin commands go through the control panel or in-game for now instead. Not a player-facing problem.")
+          ]
+        },
+        {
+          title: "Small Things Worth Watching",
+          items: [
+            watch("The game server software is a couple of versions behind the newest release.", "Not urgent. We'll update once current features are fully tested."),
+            watch("The anti-cheat plugin has a newer version available.", "Update only after compatibility and testing are planned."),
+            watch("A small technical label the game client expects (resource-pack-id) is missing.", "Low priority; add a stable one later if we keep hosting our own icon pack."),
+            watch("Players currently must download the custom icon pack to join (it's required, not optional).", "Worth deciding on before public launch."),
+            watch("Remote command sending (RCON) still isn't working after the server move.", "Admin commands work fine through the control panel or in-game; this only affects one automation shortcut."),
+            watch("The Danger Zone needs one more deliberate setting change before players can build there.", "This is intentional and waiting on your go-ahead, not a bug.")
+          ]
+        },
+        {
+          title: "Already Fixed",
+          items: [
+            done("A visual glitch where normal text broke after an icon.", "Fixed and confirmed with real screenshots."),
+            done("A building-tool plugin that wouldn't load.", "Fixed by switching to the compatible version."),
+            done("A crash in the very first rules pop-up.", "Fixed; the rules screen has worked reliably ever since."),
+            done("The server's connection address changed after a hosting move.", "Fixed; the usual join address works correctly again.")
+          ]
+        }
+      ],
+      backlog: [
+        {
+          title: "Economy Extensions",
+          items: [
+            pending("Weekly commissions."),
+            pending("Community project board."),
+            pending("Player contracts."),
+            pending("Market stalls and/or player shops."),
+            pending("Season Tokens."),
+            pending("Cosmetic/supporter monetization, only after launch basics.")
+          ]
+        },
+        {
+          title: "Platform And Reach",
+          items: [
+            pending("Map plugin."),
+            pending("Discord bridge."),
+            pending("Cross-version joining."),
+            pending("Bedrock crossplay with Geyser/Floodgate, only after key handling and support needs are clear."),
+            pending("Sleep voting."),
+            pending("Lightweight /home, /spawn, or TPA solution if the design decision lands there."),
+            pending("Badlands rewards/tasks/events that make the dangerous outer ring worth entering without undermining the safe inner civilization.")
+          ]
+        }
+      ]
+    };
+
+    function done(title, note = "", steps = null, groups = null) {
+      return { status: "done", title, note, steps, groups };
+    }
+
+    function active(title, note = "", steps = null, groups = null) {
+      return { status: "active", title, note, steps, groups };
+    }
+
+    function pending(title, note = "", steps = null, groups = null) {
+      return { status: "pending", title, note, steps, groups };
+    }
+
+    function watch(title, note = "", steps = null, groups = null) {
+      return { status: "watch", title, note, steps, groups };
+    }
+
+    function blocked(title, note = "", steps = null, groups = null) {
+      return { status: "blocked", title, note, steps, groups };
+    }
+
+    function stepGroup(title, steps) {
+      return { title, steps };
+    }
+
+    function testStep(text, complete = false) {
+      return { text, complete };
+    }
+
+    function slugify(text) {
+      return "sec-" + text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-+|-+$)/g, "");
+    }
+
+    function renderGroups(containerId, groups) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      groups.forEach((group) => {
+        const section = document.createElement("section");
+        section.className = "section";
+        section.id = slugify(group.title);
+        section.innerHTML = `
+          <div class="section-header">
+            <h2>${escapeHtml(group.title)}</h2>
+          </div>
+          <div class="section-body"></div>
+          <div class="empty">No matching items in this section.</div>
+        `;
+        const body = section.querySelector(".section-body");
+        group.items.forEach((item) => body.appendChild(renderItem(item)));
+        container.appendChild(section);
+      });
+    }
+
+    function renderIndex(containerId, groups) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = groups.map((group) => `<a class="index-chip" href="#${slugify(group.title)}">${escapeHtml(group.title)}</a>`).join("");
+    }
+
+    function renderItem(item) {
+      const row = document.createElement("article");
+      row.className = `item searchable ${item.status}`;
+      row.dataset.status = item.status;
+      row.innerHTML = `
+        <span class="item-marker" aria-hidden="true"></span>
+        <div>
+          <p class="item-title">${escapeHtml(item.title)}</p>
+          ${item.note ? `<p class="item-note">${escapeHtml(item.note)}</p>` : ""}
+          ${Array.isArray(item.steps) ? `<ol class="step-list">${item.steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("")}</ol>` : ""}
+          ${Array.isArray(item.groups) ? renderStepGroups(item.groups) : ""}
+        </div>
+        <span class="status ${item.status}">${statusLabel(item.status)}</span>
+      `;
+      return row;
+    }
+
+    function renderStepGroups(groups) {
+      return `<div class="step-groups">${groups.map((group) => `
+        <section class="step-group">
+          <h3>${escapeHtml(group.title)}</h3>
+          <ul class="step-group-list">
+            ${group.steps.map((step) => `<li class="${step.complete ? "complete" : ""}"><span class="mini-check" aria-hidden="true"></span><span>${escapeHtml(step.text)}</span></li>`).join("")}
+          </ul>
+        </section>
+      `).join("")}</div>`;
+    }
+
+    function statusLabel(status) {
+      return {
+        done: "Finished",
+        active: "Live",
+        pending: "Not Started",
+        watch: "Needs A Decision",
+        blocked: "Stuck"
+      }[status] || status;
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    renderGroups("progressSections", data.progress);
+    renderGroups("testingSections", data.testing);
+    renderGroups("bugSections", data.bugs);
+    renderGroups("backlogSections", data.backlog);
+    renderIndex("progressIndex", data.progress);
+    renderIndex("testingIndex", data.testing);
+
+    const tabs = Array.from(document.querySelectorAll(".tab-button"));
+    const panels = Array.from(document.querySelectorAll(".tab-panel"));
+    const search = document.getElementById("search");
+    const filters = Array.from(document.querySelectorAll(".filter-button"));
+    let activeFilter = "all";
+
+    function safeLocalStorage(method, key, value) {
+      try {
+        if (method === "get") {
+          return window.localStorage.getItem(key);
+        }
+        window.localStorage.setItem(key, value);
+      } catch (error) {
+        return null;
+      }
+      return null;
+    }
+
+    function setTab(tab) {
+      tabs.forEach((button) => button.setAttribute("aria-selected", String(button.dataset.tab === tab)));
+      panels.forEach((panel) => panel.classList.toggle("active", panel.id === tab));
+      safeLocalStorage("set", "pm-dashboard-tab", tab);
+      applyFilters();
+    }
+
+    tabs.forEach((button) => {
+      button.addEventListener("click", () => setTab(button.dataset.tab));
+    });
+
+    filters.forEach((button) => {
+      button.addEventListener("click", () => {
+        activeFilter = button.dataset.filter;
+        filters.forEach((item) => item.dataset.active = String(item === button));
+        applyFilters();
+      });
+    });
+
+    search.addEventListener("input", applyFilters);
+
+    function applyFilters() {
+      const activePanel = document.querySelector(".tab-panel.active");
+      const query = search.value.trim().toLowerCase();
+      const items = Array.from(activePanel.querySelectorAll(".searchable"));
+      items.forEach((item) => {
+        const statusMatches = activeFilter === "all" || item.dataset.status === activeFilter;
+        const textMatches = !query || item.textContent.toLowerCase().includes(query);
+        item.dataset.hidden = String(!(statusMatches && textMatches));
+      });
+      Array.from(activePanel.querySelectorAll(".section")).forEach((section) => {
+        const visibleItems = Array.from(section.querySelectorAll(".searchable")).filter((item) => item.dataset.hidden !== "true");
+        const empty = section.querySelector(".empty");
+        if (empty) {
+          empty.classList.toggle("visible", visibleItems.length === 0);
+        }
+      });
+    }
+
+    const savedTab = safeLocalStorage("get", "pm-dashboard-tab");
+    const initialTab = savedTab && document.getElementById(savedTab) ? savedTab : "overview";
+    setTab(initialTab);
+  </script>
+</body>
+</html>
