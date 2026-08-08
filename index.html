@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PlayMinecraftIN Progress Dashboard</title>
-  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  <link rel="icon" type="image/png" href="assets/logo.png">
   <style>
     :root {
       color-scheme: light;
@@ -101,7 +101,6 @@
       height: 40px;
       margin-top: 2px;
       border-radius: 8px;
-      image-rendering: pixelated;
       box-shadow: var(--shadow);
     }
 
@@ -667,7 +666,7 @@
       <div class="header-inner">
         <div class="title-row">
           <div class="logo-row">
-            <img class="logo-mark" src="assets/logo.svg" alt="" width="40" height="40">
+            <img class="logo-mark" src="assets/logo.png" alt="" width="40" height="40">
             <div>
               <h1>PlayMinecraftIN Dashboard</h1>
               <p class="subtitle">A plain-language look at how the server is doing, what's finished, and what's next. No technical background needed.</p>
@@ -1325,7 +1324,7 @@
         {
           title: "Anything Urgent Right Now?",
           items: [
-            watch("Nothing urgent right now.", "The last health check came back clean with no crash. One thing to know: sending commands remotely (RCON) isn't working since the server moved hosts, so admin commands go through the control panel or in-game for now instead. Not a player-facing problem.")
+            blocked("The usual join address (playminecraft.in) currently sends players to the wrong server.", "The host moved again on 2026-08-09 (to bg04.lordcloud.ovh) but the domain still points at the old host, which now runs someone else's unrelated server. Use bg04.lordcloud.ovh:25510 to join directly until the domain is repointed — that repoint has to happen wherever the domain is managed, and only the owner can do it.")
           ]
         },
         {
@@ -1335,7 +1334,7 @@
             watch("The anti-cheat plugin has a newer version available.", "Update only after compatibility and testing are planned."),
             watch("A small technical label the game client expects (resource-pack-id) is missing.", "Low priority; add a stable one later if we keep hosting our own icon pack."),
             watch("Players currently must download the custom icon pack to join (it's required, not optional).", "Worth deciding on before public launch."),
-            watch("Remote command sending (RCON) still isn't working after the server move.", "Admin commands work fine through the control panel or in-game; this only affects one automation shortcut."),
+            watch("Remote command sending (RCON) still isn't working after the server move.", "Admin commands work fine through the control panel or in-game; this only affects one automation shortcut. Still unresolved after the 2026-08-09 host move as well."),
             watch("The Danger Zone needs one more deliberate setting change before players can build there.", "This is intentional and waiting on your go-ahead, not a bug.")
           ]
         },
@@ -1345,7 +1344,7 @@
             done("A visual glitch where normal text broke after an icon.", "Fixed and confirmed with real screenshots."),
             done("A building-tool plugin that wouldn't load.", "Fixed by switching to the compatible version."),
             done("A crash in the very first rules pop-up.", "Fixed; the rules screen has worked reliably ever since."),
-            done("The server's connection address changed after a hosting move.", "Fixed; the usual join address works correctly again.")
+            done("The server's connection address changed after an earlier hosting move.", "Fixed at the time; the address has since changed again — see the blocker above.")
           ]
         }
       ],
