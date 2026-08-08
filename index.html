@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PlayMinecraftIN Progress Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
   <style>
     :root {
       color-scheme: light;
@@ -86,6 +87,22 @@
       align-items: flex-start;
       justify-content: space-between;
       gap: 18px;
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .logo-mark {
+      flex: none;
+      width: 40px;
+      height: 40px;
+      margin-top: 2px;
+      border-radius: 8px;
+      image-rendering: pixelated;
+      box-shadow: var(--shadow);
     }
 
     h1 {
@@ -649,9 +666,12 @@
     <header>
       <div class="header-inner">
         <div class="title-row">
-          <div>
-            <h1>PlayMinecraftIN Dashboard</h1>
-            <p class="subtitle">A plain-language look at how the server is doing, what's finished, and what's next. No technical background needed.</p>
+          <div class="logo-row">
+            <img class="logo-mark" src="assets/logo.svg" alt="" width="40" height="40">
+            <div>
+              <h1>PlayMinecraftIN Dashboard</h1>
+              <p class="subtitle">A plain-language look at how the server is doing, what's finished, and what's next. No technical background needed.</p>
+            </div>
           </div>
           <div class="meta" aria-label="Dashboard metadata">
             <span class="pill"><strong>Updated</strong> Aug 8, 2026</span>
