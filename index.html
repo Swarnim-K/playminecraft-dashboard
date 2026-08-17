@@ -673,9 +673,9 @@
             </div>
           </div>
           <div class="meta" aria-label="Dashboard metadata">
-            <span class="pill"><strong>Updated</strong> Aug 8, 2026</span>
-            <span class="pill"><strong>Server Version</strong> 1.22.0 (live)</span>
-            <span class="pill"><strong>Coming Next</strong> 1.24.0 (ready, not installed yet)</span>
+            <span class="pill"><strong>Updated</strong> Aug 15, 2026</span>
+            <span class="pill"><strong>Server Version</strong> 1.24.14 (deployed live, awaiting restart)</span>
+            <span class="pill"><strong>Coming Next</strong> Restart via LordCloud panel to bring 1.24.14 online</span>
           </div>
         </div>
         <nav class="tabs" aria-label="Dashboard tabs">
@@ -707,7 +707,7 @@
           <span class="hero-dot" aria-hidden="true"></span>
           <div>
             <h2>Your server is up and running smoothly</h2>
-            <p>The last health check (Jul 8, 2026) came back clean: no crashes, no plugin errors. Players can build, earn in-game currency, complete daily tasks, mine for skill levels, travel around the map, trade with each other, and more. A small update is ready to install when you give the go-ahead (see "Coming Next" above).</p>
+            <p>The server is stable as of the latest check (Aug 13, 2026), but it was a bumpy day. LordCloud moved the server to a new host address again (now <code>in-100.lordcloud.ovh</code>) - the join address <code>playminecraft.in</code> hasn't been rechecked against it yet, so treat it as unconfirmed until that happens. A live-map add-on (Pl3xMap) was installed and immediately caused the server to crash and restart itself over and over, about once a minute - most likely because it briefly pushed memory usage over the server's limit. It's been removed and the server has been stable since, but it revealed that memory usage is already close to the ceiling even without it, worth keeping in mind before adding anything else. Separately, the two world-terrain add-ons (Geophilic and Tectonic) that were installed weeks ago but never actually worked turned out to be sitting in the wrong folder the whole time - that's now fixed and confirmed loading on a freshly regenerated world. The one earlier watch item, a near-minute freeze during a routine world save (most likely a slow-disk hiccup on the host), hasn't recurred in the newest logs but also hasn't been actively chased down yet. Players can build, earn in-game currency, complete daily tasks, mine for skill levels, travel around the map, trade with each other, and more. A small update is ready to install when you give the go-ahead (see "Coming Next" above).</p>
           </div>
         </div>
 
@@ -736,9 +736,17 @@
           <div class="section-body">
             <div class="card" style="border:0;box-shadow:none;padding:16px 18px 4px">
               <div class="grid">
+                <article class="card searchable" data-status="pending">
+                  <h2>Danger Zone deaths &amp; fight rules fixed - built, not uploaded yet</h2>
+                  <p>Two changes, built and ready but not yet on the live server: dying inside the safe Sanctum will now let you keep your full inventory, while dying out in the Badlands still drops your items as normal - that's the actual risk of living out there. Separately, the in-game rules text about fighting was wrong (it said fighting was off everywhere); it's now corrected to explain that fighting only works in the Badlands, and only when both players are out there together. Neither change affects the Coin fee already charged on death, which still applies everywhere. Needs a full build and an upload/restart before players see either change.</p>
+                </article>
+                <article class="card searchable" data-status="watch">
+                  <h2>Money &amp; rewards rebalance, now with Farming - deployed, needs a restart</h2>
+                  <p>Daily task rewards were badly out of balance - two of the "hard" tasks paid less Coins than an "easy" one - so all mining tasks were repriced around one fixed rule: turning in a stack of Cobblestone always pays 50 Coins, with Normal tasks paying 1.5x that and Hard tasks 2.5x that. That uncovered a loophole (buying Stone and smelting it could out-earn a task), so that one task was swapped for a mining-only task that can't be bought around. Shop prices, claim-land prices, and the Coin fee on death were all scaled up to match. The Daily Board now guarantees a set mix of easy/normal/hard tasks every single day in every category, instead of hard tasks only showing up sometimes by chance - and a brand new Farming category just went in alongside Mining (harvest crops, breed animals, brew potions, fill your claim with crops), plus new food items in the shop. Existing players' Coin balances were reset to zero a second time rather than migrated, at your request, since testing since the last reset had already started earning again. One thing was deliberately left undecided rather than guessed at: whether the Renown currency should get a real way to earn it, or be retired in favor of just using Coins for land slots - that's still an open question for you. <strong>This is uploaded to the server now, but the server needs a restart before any of it takes effect</strong> - the automatic remote-restart attempt failed (same connection issue noted below), so this needs the manual restart button in the LordCloud panel.</p>
+                </article>
                 <article class="card searchable" data-status="active">
                   <h2>What we're working on</h2>
-                  <p>Getting the next update (version 1.24.0) installed and tested. It adds an easier point-and-click menu for the Mining skill and a full set of mining-themed daily tasks.</p>
+                  <p>Waiting on a server restart to bring the money/rewards/Farming rebalance above online, then getting version 1.24.1's remaining pieces double-checked in-game: an easier point-and-click menu for the Mining skill, a friendlier task menu (click a category to see its tasks, empty categories show "Coming soon"), and a smarter travel safety check that lets you confirm a risky teleport instead of just blocking it.</p>
                 </article>
                 <article class="card searchable" data-status="active">
                   <h2>What players can already do</h2>
@@ -753,12 +761,16 @@
                   <p>A custom icon pack is live so Coins, Renown, and task menus show proper icons instead of plain text. Confirmed working from real screenshots.</p>
                 </article>
                 <article class="card searchable" data-status="done">
+                  <h2>Bigger, more varied terrain (fixed Aug 13)</h2>
+                  <p>The Geophilic and Tectonic world-generation add-ons were installed weeks ago but never actually worked - they'd been uploaded to the wrong folder on the server the whole time. That's now fixed and confirmed working on a freshly regenerated world. Next step is running the pregeneration tool across the full map so the new terrain is ready before players explore it.</p>
+                </article>
+                <article class="card searchable" data-status="done">
                   <h2>Long-term world plan</h2>
                   <p>We're building one big shared world split into a protected "Sanctum" (safe building, no player-vs-player fighting) and an outer "Badlands" (riskier area with fighting allowed and tougher monsters).</p>
                 </article>
                 <article class="card searchable" data-status="pending">
                   <h2>Getting ready to open to the public</h2>
-                  <p>Still open: a welcome message (MOTD), confirming the join address works, deciding on a waiting list, confirming backups are running, and one full test of the new-player experience.</p>
+                  <p>The join address (playminecraft.in) was confirmed reachable as of 2026-08-09, but the server has since moved to a new host address again (2026-08-13) and the domain hasn't been rechecked against it yet - treat it as unconfirmed for now. Still open: a branded welcome message (MOTD), fixing the whitelist so it actually matches the "public from day one" plan (it currently blocks non-whitelisted players), confirming backups are running, and one full test of the new-player experience with an actual client.</p>
                 </article>
               </div>
             </div>
@@ -772,7 +784,7 @@
           <div class="section-body">
             <div class="card">
               <ul class="key-list">
-                <li><span>Main focus</span><div>Install and test the 1.24.0 update when you're ready. No world resets or risky changes are needed for this update.</div></li>
+                <li><span>Main focus</span><div>Restart the server via the LordCloud panel to bring the 1.24.14 update (money/rewards rebalance plus the new Farming category) online, then decide whether Renown should get a real way to earn it or be retired (see "Money &amp; rewards rebalance" above). No world resets or risky changes are needed for this update.</div></li>
                 <li><span>Launch plan</span><div>Open to everyone from day one, once the remaining launch basics below are done.</div></li>
                 <li><span>World plan</span><div>Safe building zone in the middle, riskier PvP zone around the outside.</div></li>
                 <li><span>Custom icon pack</span><div><a href="../minecraft-server/lordcloud/resource-packs/playminecraft-ui/README.md">PlayMinecraftIN UI 0.1.0</a> is live. Still deciding whether to require it or make it optional.</div></li>
@@ -982,7 +994,7 @@
         {
           title: "Onboarding And Rules",
           items: [
-            active("Onboarding and rules.", "Inventory-based rules acceptance (rules-version rules-inventory-v2) plus first-join /guide onboarding are live through PlayMinecraftCore 1.22.0. Admins edit rules via /admin rules (draft/publish) and onboarding via /admin onboarding. Guides: playminecraft-core-v0.9.9-rules-inventory-test-guide.md, playminecraft-core-v1.0.0-onboarding-guide-test-guide.md.", null, [
+            active("Onboarding and rules.", "Inventory-based rules acceptance (rules-version rules-inventory-v2) plus first-join /guide onboarding are live through PlayMinecraftCore 1.24.0 (corrected Aug 9, 2026 via a fresh server check - it had been misrecorded as 1.22.0). Admins edit rules via /admin rules (draft/publish) and onboarding via /admin onboarding. Guides: playminecraft-core-v0.9.9-rules-inventory-test-guide.md, playminecraft-core-v1.0.0-onboarding-guide-test-guide.md.", null, [
               stepGroup("Fresh player flow", [
                 testStep("Join as a new/unaccepted account; confirm the required rules screen blocks normal play and Accept/Close/Reject buttons work."),
                 testStep("Accept and confirm the first-join guide opens with Start Guide items in sequence."),
@@ -1024,6 +1036,19 @@
                 testStep("Relog and confirm balances and HUD state survive."),
                 testStep("Run check-server after any economy admin change.")
               ])
+            ]),
+            watch("Money & rewards rebalance + Farming (v1.24.14, deployed live, waiting on a server restart).", "Daily task rewards, shop/claim/death-fee prices were repriced around one fixed rule: a stack of Cobblestone always pays 50 Coins. This fixed an inversion where two 'hard' tasks paid less than an 'easy' one, and closed a loophole where the corrected hard-tier price would have let a player buy-and-smelt Stone for more Coins than the task paid. The leaderboard was turned off entirely rather than rescaled. The Daily Board now guarantees a fixed mix of easy/normal/hard tasks every day in every category (instead of hard tasks only showing up by chance), a full Farming category was added alongside Mining, and new food items were added to the shop. Existing Coin balances were reset to zero a second time rather than migrated, per your decision. Whether Renown should get a real source or be retired was deliberately left undecided — flagged for you, not guessed at. The new jar is uploaded and the old data was cleared, but the server process itself hasn't restarted yet — the automatic restart attempt failed the same way it did last time (see Known Issues). Full detail: economy-overview.md and decision-log.md (2026-08-15).", null, [
+              stepGroup("Before it's live", [
+                testStep("Restart the server via the LordCloud panel — required before any of this takes effect.", true),
+                testStep("Confirm the version number in-game reports 1.24.14 after restart.")
+              ]),
+              stepGroup("After restart", [
+                testStep("Complete one Easy, one Normal, and one Hard mining task; confirm payouts are 50 / 75 / 125 Coins."),
+                testStep("Open /tasks and confirm Farming is no longer 'Coming soon' and shows its own 4 tasks (2 easy/1 normal/1 hard)."),
+                testStep("Check the shop (/exchange) has the original 6 building items plus 11 new food items."),
+                testStep("Check /claims bonus-block prices and a death-fee charge both reflect the new, higher numbers."),
+                testStep("Confirm you can complete up to 5 tasks per day total, spread across both categories.")
+              ])
             ])
           ]
         },
@@ -1054,7 +1079,7 @@
         {
           title: "Daily Board And Tasks",
           items: [
-            active("Daily Board, tasks, and the v1.24.0 Mining rebuild.", "/tasks (with /daily and /board aliases) rotates categories, tracks event-based tasks (breeding, harvest, brew, claim expansion, trades), shows Open/In Progress/Ready/Done status, and supports pinning. /admin tasks covers reload, status, and reset. The v1.24.0 Mining-only rebuild (18 tasks, skill-scaled) is built locally and not deployed yet. Guide: playminecraft-core-v1.24.0-mining-daily-tasks-test-guide.md.", null, [
+            active("Daily Board, tasks, and the v1.24.0 Mining rebuild.", "/tasks (with /daily and /board aliases) rotates categories, tracks event-based tasks (breeding, harvest, brew, claim expansion, trades), shows Open/In Progress/Ready/Done status, and supports pinning. /admin tasks covers reload, status, and reset. The v1.24.0 Mining-only rebuild (18 tasks, skill-scaled) is built locally and not deployed yet. New in v1.24.1 (not yet deployed): clicking a category icon in /tasks now opens that category's tasks in its own screen instead of listing a couple inline, categories with no tasks yet show a 'Coming soon' icon instead of disappearing, and the task's description now shows right under its name instead of only after a second click. Guide: playminecraft-core-v1.24.0-mining-daily-tasks-test-guide.md.", null, [
               stepGroup("Board and completion", [
                 testStep("/tasks shows rotated categories, the reset timer, filters, and the ready-to-claim count."),
                 testStep("Complete an item-delivery task and an event-tracked task (breeding, harvest, brew, or claim); confirm rewards land.")
@@ -1071,6 +1096,12 @@
                 testStep("After deploying, confirm only Mining tasks appear and mine_blocks progress advances correctly for Deep Delve, Ore Scout, The Stone Harvest, and Gold Rush."),
                 testStep("Confirm skill-scaled item quantities match the player's Mining level band.")
               ]),
+              stepGroup("v1.24.1 tasks GUI: category headers, Coming Soon, description placement (pending deploy)", [
+                testStep("In the /tasks All view, click the Mining header; confirm it opens Mining's full task list in its own screen instead of showing a couple of tasks inline under the header."),
+                testStep("Confirm Gathering, Farming, Crafting, Building, and Trading each show a greyed-out 'Coming soon' header, and clicking them does nothing (no error, no menu opens)."),
+                testStep("Open a task's tooltip and its detail screen (the one showing the task ID); confirm the task's description shows directly under its name in both, not only at the bottom of the detail screen."),
+                testStep("If a future daily-tasks.yml edit adds a task to a currently-empty category, confirm that category's header switches from 'Coming soon' to a normal clickable header on the next /tasks open.")
+              ]),
               stepGroup("Closeout", [
                 testStep("Run check-server; confirm no stale task IDs from the retired catalog are referenced.")
               ])
@@ -1080,7 +1111,7 @@
         {
           title: "Skills - Mining",
           items: [
-            active("Mining skill: config, XP, perks, scaling, and GUI.", "One continuous system built in phases (config foundation, XP tracking, chat UI/admin, Daily scaling, underground Haste perk) and live through PlayMinecraftCore 1.22.0. The inventory GUI (/skills, /admin skills) and the 18-task Mining-only Daily rebuild are built locally at v1.24.0 and not deployed yet. Coin rewards from Mining and bonus drops remain intentionally deferred. Guides: playminecraft-core-v1.19.0-mining-xp-test-guide.md, playminecraft-core-v1.20.0-skills-ui-admin-test-guide.md, playminecraft-core-v1.21.0-daily-skill-scaling-test-guide.md, playminecraft-core-v1.22.0-mining-haste-perk-test-guide.md, playminecraft-core-v1.24.0-mining-daily-tasks-test-guide.md.", null, [
+            active("Mining skill: config, XP, perks, scaling, and GUI.", "One continuous system built in phases (config foundation, XP tracking, chat UI/admin, Daily scaling, underground Haste perk, inventory GUI). A fresh server check on Aug 9, 2026 confirmed live PlayMinecraftCore is actually 1.24.0, not 1.22.0 as previously recorded here - the owner had already deployed it. That means the inventory GUI (/skills, /admin skills) and the 18-task Mining-only Daily rebuild are live, not just built locally as this page previously said; in-game verification of them is still pending. Coin rewards from Mining and bonus drops remain intentionally deferred. Guides: playminecraft-core-v1.19.0-mining-xp-test-guide.md, playminecraft-core-v1.20.0-skills-ui-admin-test-guide.md, playminecraft-core-v1.21.0-daily-skill-scaling-test-guide.md, playminecraft-core-v1.22.0-mining-haste-perk-test-guide.md, playminecraft-core-v1.24.0-mining-daily-tasks-test-guide.md.", null, [
               stepGroup("XP and levels", [
                 testStep("Break configured Mining blocks and confirm XP/level-up matches documented values (stone 0.2, soft earth 0.1, coal 1.0, iron/copper 2.0, gold/lapis/redstone 3.0, diamond/emerald 8.0, ancient debris 15.0)."),
                 testStep("Confirm creative, cancelled, unaccepted, and no-permission breaks award nothing."),
@@ -1097,7 +1128,7 @@
                 testStep("/admin skills setxp|addxp|setlevel <player> mining <amount>, reload, and player lookup for online/offline/unknown targets.")
               ]),
               stepGroup("v1.24.0 GUI and task pool (pending deploy)", [
-                testStep("Deploy, back up and merge live skills.yml and daily-tasks.yml, confirm /pmcore version reports 1.24.0."),
+                testStep("Deploy, back up and merge live skills.yml and daily-tasks.yml, confirm /pmcore version reports 1.24.1."),
                 testStep("Verify the /skills hub, /skills mining detail screen, and the /admin skills inventory GUI.")
               ]),
               stepGroup("Closeout", [
@@ -1109,7 +1140,7 @@
         {
           title: "Travel",
           items: [
-            active("Travel destinations, waypoints, requests, and trust.", "/travel is a 54-slot hub covering configured destinations (/main, /resource), private/public waypoints, online-player travel requests, and receiver-owned trust. Combat tag blocks travel for 15 seconds, shown as a red PvP boss-bar countdown, and Badlands travel-out is blocked when zones are enabled. /admin travel manages public waypoints, player trust, and reload. Guide: playminecraft-core-v1.13.1-travel-waypoints-requests-test-guide.md.", null, [
+            active("Travel destinations, waypoints, requests, and trust.", "/travel is a 54-slot hub covering configured destinations (/main, /resource), private/public waypoints, online-player travel requests, and receiver-owned trust. Combat tag blocks travel for 15 seconds, shown as a red PvP boss-bar countdown, and Badlands travel-out is blocked when zones are enabled. /admin travel manages public waypoints, player trust, and reload. New as of 2026-08-09, now versioned as PlayMinecraftCore 1.24.1 (not yet built/deployed): if a spot fails the safety check, the player can now repeat the same travel action within 15 seconds to force-teleport there anyway instead of being blocked forever. Guide: playminecraft-core-v1.13.1-travel-waypoints-requests-test-guide.md.", null, [
               stepGroup("Destinations and waypoints", [
                 testStep("/main and /resource return to the last PMCore-travel location with spawn fallback."),
                 testStep("Create, publish/hide, and delete a private and a public waypoint within configured limits.")
@@ -1121,6 +1152,11 @@
               stepGroup("PvP and zones", [
                 testStep("Get combat-tagged; confirm travel is denied and the boss-bar countdown survives a relog until it expires."),
                 testStep("If zones are enabled, confirm Badlands entry works but PMCore Travel cannot leave Badlands.")
+              ]),
+              stepGroup("Unsafe-spot confirm-to-force (new in v1.24.1, not yet deployed)", [
+                testStep("Travel somewhere with no safe standing spot; confirm the usual error still shows, plus a new prompt to run it again within 15 seconds to teleport anyway."),
+                testStep("Repeat the same travel action right away; confirm it force-teleports to the unsafe spot with a warning, for destinations, waypoints, and player travel alike."),
+                testStep("Wait past 15 seconds before repeating; confirm it blocks again instead of forcing. Disconnect between the warning and the repeat; confirm it does not force-teleport later on an unrelated attempt.")
               ]),
               stepGroup("Admin and closeout", [
                 testStep("/admin travel: list/delete public waypoints, inspect a player's travel counts, clear trust, reload travel.yml."),
@@ -1302,19 +1338,32 @@
         {
           title: "Launch Readiness - Fresh Player Flow",
           items: [
-            pending("End-to-end fresh player flow.", "End-to-end validation that a brand-new player can join, understand rules/onboarding, and use the core systems without confusion, plus the operational basics (MOTD, domain, whitelist, backups) needed before going public. No dedicated guide yet; run this as a full pass before any launch push.", null, [
-              stepGroup("First join", [
-                testStep("Fresh non-op account joins; rules block bypass until accepted; spawn onboarding explains claims, Discord, reporting, and the Daily Board.")
+            pending("End-to-end fresh player flow.", "End-to-end validation that a brand-new player can join, understand rules/onboarding, and use the core systems without confusion, plus the operational basics (MOTD, domain, whitelist, backups) needed before going public. Investigated 2026-08-09: domain reachability is confirmed at the network level, but MOTD, whitelist, and backups each need a manual owner action, and no one has run the actual client join flow yet. Full checklist mirrors docs/progress-dashboard.md Testing -> \"Launch Readiness: Join Flow & Server Basics\".", null, [
+              stepGroup("Domain and connection", [
+                testStep("playminecraft.in DNS and status-ping reachability confirmed 2026-08-09 (matches bg04.lordcloud.ovh:25510, Paper 1.21.11 protocol 774).", true),
+                testStep("Join with an actual Minecraft client using playminecraft.in:25510 (not just a status ping) and confirm it reaches the real world/spawn."),
+                testStep("Decide whether join instructions should always include the port explicitly, since 25510 is not the Minecraft default."),
+                testStep("Decide whether play.playminecraft.in is still wanted; it does not currently exist in DNS.")
               ]),
-              stepGroup("Core commands", [
-                testStep("/coins, /renown, /daily, /hud, /main, /resource, /claims, and /travel all work; admin-only commands deny clearly.")
+              stepGroup("Server-facing basics (MOTD, whitelist)", [
+                testStep("Set a branded MOTD in server.properties (currently the Paper default \"A Minecraft Server\"); restart and confirm via check-server."),
+                testStep("Decide and apply the whitelist state for public launch. Current live state (white-list=true, enforce-whitelist=false) blocks non-whitelisted joins and contradicts the public-launch plan."),
+                testStep("Restart once (not /reload) after both changes and confirm motd/white-list reflect the intended values via check-server.")
               ]),
-              stepGroup("Operational basics", [
-                testStep("Branded MOTD is set; joining through playminecraft.in works; whitelist setting matches the launch plan; the LordCloud backup routine is confirmed.")
+              stepGroup("Backups", [
+                testStep("Owner checks the LordCloud panel Backups tab for an existing automatic schedule and retention window."),
+                testStep("Confirm a manual/on-demand backup can be triggered before risky changes."),
+                testStep("Record the confirmed backup routine in the dashboard and decision log once checked.")
+              ]),
+              stepGroup("Full new-player flow", [
+                testStep("Fresh non-op account joins; rules block bypass until accepted; spawn onboarding explains claims, Discord, reporting, and the Daily Board."),
+                testStep("/coins, /renown, /daily, /hud, /main, /resource, /claims, and /travel all work; admin-only commands deny clearly."),
+                testStep("HUD, claims, and Daily Board are understandable without prior explanation; note any point a genuinely new player would likely get stuck.")
               ]),
               stepGroup("Closeout", [
                 testStep("Relog and confirm accepted status, HUD preference, and player-facing state persist without inspecting private state files."),
-                testStep("Run check-server after the flow and log any blocker under Bugs.")
+                testStep("Run check-server after the flow and log any blocker under Bugs."),
+                testStep("Flip the corresponding Launch Readiness checklist items once verified, and record the final whitelist/backup decisions in the decision log.")
               ])
             ])
           ]
@@ -1324,7 +1373,9 @@
         {
           title: "Anything Urgent Right Now?",
           items: [
-            blocked("The usual join address (playminecraft.in) currently sends players to the wrong server.", "The host moved again on 2026-08-09 (to bg04.lordcloud.ovh) but the domain still points at the old host, which now runs someone else's unrelated server. Use bg04.lordcloud.ovh:25510 to join directly until the domain is repointed — that repoint has to happen wherever the domain is managed, and only the owner can do it.")
+            blocked("The server is currently gated to whitelisted players only, which contradicts the public-launch plan.", "Live server.properties has white-list=true and enforce-whitelist=false. white-list=true is what actually blocks non-whitelisted players from joining at all; enforce-whitelist only controls whether already-connected players get kicked when the whitelist reloads. Confirmed 2026-08-09. Needs an explicit go/no-go decision plus a manual server.properties change (white-list=false, or a deliberate documented whitelist plan) before opening to the public. See Launch Readiness under Testing."),
+            watch("The server froze for close to a minute during a routine world save.", "Confirmed 2026-08-09 via check-server: the server stopped responding for an escalating 10 to 52 seconds while saving the world to disk, most likely because the hosting disk was slow at that moment, not because of anything in our plugin. Every player online would have felt a full freeze/rubber-band for up to a minute. Worth asking LordCloud about host disk performance if this happens again; not something we can fix in plugin code."),
+            watch("A smaller, separate freeze pattern was also found in our own plugin's background saving.", "Our plugin occasionally saves player activity stats to a file directly on the main game thread instead of in the background, which showed up as a few shorter (under 10 second) freezes in the same log. On a healthy disk this is minor, but it could add to the bigger freeze above if the host's disk is having a slow day. Worth fixing in code if it keeps showing up.")
           ]
         },
         {
@@ -1335,7 +1386,10 @@
             watch("A small technical label the game client expects (resource-pack-id) is missing.", "Low priority; add a stable one later if we keep hosting our own icon pack."),
             watch("Players currently must download the custom icon pack to join (it's required, not optional).", "Worth deciding on before public launch."),
             watch("Remote command sending (RCON) still isn't working after the server move.", "Admin commands work fine through the control panel or in-game; this only affects one automation shortcut. Still unresolved after the 2026-08-09 host move as well."),
-            watch("The Danger Zone needs one more deliberate setting change before players can build there.", "This is intentional and waiting on your go-ahead, not a bug.")
+            watch("The Danger Zone needs one more deliberate setting change before players can build there.", "This is intentional and waiting on your go-ahead, not a bug."),
+            watch("The server's welcome message (MOTD) still shows the generic default instead of a branded one.", "Confirmed 2026-08-09 via check-server; still says \"A Minecraft Server\" in the server list. Proposed branded text and the manual edit steps are in Launch Readiness under Testing."),
+            watch("The automatic backup routine hasn't been confirmed yet.", "No backup plugin is installed, so any backups are LordCloud panel-level only, and the panel API is still blocked, so this can't be checked through scripts. Needs a manual owner check in the LordCloud panel's Backups tab."),
+            watch("Claude Code can't yet fully trust its own local plugin-build results on this PC.", "Confirmed 2026-08-09: running the build tool through Claude's own commands sometimes fails with a Windows socket error, while the exact same build succeeds when you run it yourself in your own terminal at the same moment. Not a code problem — until the cause is found, Claude should ask you to run the build yourself and report back rather than trusting its own build attempts. See the 2026-08-09 entry in docs/decision-log.md for the full technical trail.")
           ]
         },
         {
@@ -1344,7 +1398,8 @@
             done("A visual glitch where normal text broke after an icon.", "Fixed and confirmed with real screenshots."),
             done("A building-tool plugin that wouldn't load.", "Fixed by switching to the compatible version."),
             done("A crash in the very first rules pop-up.", "Fixed; the rules screen has worked reliably ever since."),
-            done("The server's connection address changed after an earlier hosting move.", "Fixed at the time; the address has since changed again — see the blocker above.")
+            done("The server's connection address changed after an earlier hosting move.", "Fixed at the time; the address changed again after a later host move."),
+            done("The main join address (playminecraft.in) was briefly sending players to the wrong server.", "After the 2026-08-09 host move, the domain still pointed at the old host, which was running someone else's unrelated server. Re-checked the same day at 14:17 IST: the domain now correctly points at the current host and answers as PlayMinecraftIN. Cause of the fix is unconfirmed (owner action vs. automatic DNS propagation); a full in-client join test is still open, only a status ping was verified.")
           ]
         }
       ],
